@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Login - Telegram Clone</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body>
+    <form id="loginForm">
+        <h2>Entrar a Telegram Clone</h2>
+
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="status">Estado:</label>
+        <input type="text" id="status" name="status" required />
+
+        <label>Selecciona un avatar:</label>
+        <div class="avatar-options">
+            <img src="/imagenes/avatar1.png" class="avatar-option" data-avatar="/imagenes/avatar1.png" />
+            <img src="/imagenes/avatar2.png" class="avatar-option" data-avatar="/imagenes/avatar2.png" />
+            <img src="/imagenes/avatar3.png" class="avatar-option" data-avatar="/imagenes/avatar3.png" />
+            <img src="/imagenes/avatar4.png" class="avatar-option" data-avatar="/imagenes/avatar4.png" />
+        </div>
+
+        <p>O elige una imagen de tu galería:</p>
+        <input type="file" id="avatarFile" accept="image/*" />
+
+        <button type="submit">Entrar</button>
+    </form>
+    <script src="/js/login.js"></script>
+</body>
+
+</html>

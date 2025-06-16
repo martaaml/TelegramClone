@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Telegram Clone - Chat</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #sidebar {
+            width: 250px;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+            background: #f7f7f7;
+            padding: 10px;
+        }
+
+        #sidebar h2 {
+            margin-top: 0;
+        }
+
+        #chatList {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        #chatList li {
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            transition: background 0.2s;
+        }
+
+        #chatList li.active,
+        #chatList li:hover {
+            background: #d0eaff;
+        }
+
+        #chatList li img {
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        #chatMain {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chatHeader {
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+            background: #e9f0fb;
+            display: flex;
+            align-items: center;
+        }
+
+        #chatHeader img {
+            border-radius: 50%;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+
+        #chatMessages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        #chatMessages div {
+            margin-bottom: 10px;
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        #chatMessages div.own {
+            background: #daf1da;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        #chatMessages div.other {
+            background: #f1f1f1;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        #chatForm {
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background: #f7f7f7;
+            display: flex;
+        }
+
+        #messageInput {
+            flex-grow: 1;
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        #chatForm button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #chatForm button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <aside id="sidebar">
+            <h2>Chats</h2>
+            <ul id="chatList">
+                <li data-chat="general" class="active">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png" alt="Chat General" width="30"
+                        height="30">
+                   TeleChat
+                </li>
+            </ul>
+        </aside>
+
+        <main id="chatMain">
+            <header id="chatHeader">
+                <img id="chatHeaderAvatar" src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
+                    alt="Chat General">
+                <strong id="chatTitle">Chat General</strong>
+            </header>
+
+            <section id="chatMessages"></section>
+
+            <form id="chatForm">
+                <input type="text" id="messageInput" placeholder="Escribe un mensaje..." autocomplete="off" />
+                <button type="submit">Enviar</button>
+            </form>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.js"></script>
+</body>
+
+</html>

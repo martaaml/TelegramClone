@@ -1,0 +1,98 @@
+body {
+  font-family: sans-serif;
+  display: flex;
+  height: 100vh;
+  margin: 0;
+}
+
+#container {
+  display: flex;
+  width: 100%;
+}
+
+#sidebar {
+  width: 250px;
+  background: #f0f0f0;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#chatMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#userInfo {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+#chatMessages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#chatForm {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+#chatForm input {
+  flex: 1;
+  padding: 5px;
+}
+
+#chatForm button {
+  margin-left: 10px;
+}
+ç.avatar-options {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.avatar-option {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border 0.2s;
+}
+
+.avatar-option.selected {
+  border: 2px solid #007bff;
+}
+
+#sidebar {
+  height: 100vh;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+  width: 300px; /* o el ancho que uses */
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+
+#usersList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+  flex-grow: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#privateChatContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+#privateChatMessages {
+  flex-grow: 1;
+}
