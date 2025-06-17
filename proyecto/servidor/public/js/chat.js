@@ -1,19 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
     const stored = localStorage.getItem("userData");
 
-    /* Si no hay datos de usuario, redirigir al login */
     if (!stored) {
         alert("Datos de usuario faltantes. Redirigiendo al login...");
         window.location.href = "/";
         return;
     }
 
-    /*Elementos y variables principales*/
-    //Las variables se cogen y se asignan a través del ID
     const user = JSON.parse(stored);
-
     const socket = io();
-
+    //vARIABLES DEL DOM
     const chatList = document.getElementById("chatList");
     const chatTitle = document.getElementById("chatTitle");
     const chatMessages = document.getElementById("chatMessages");
@@ -21,26 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const messageInput = document.getElementById("messageInput");
     const chatHeaderAvatar = document.getElementById("chatHeaderAvatar");
 
-    const chats = {
-        general: []
-    };
-
+    const chats = { general: [] };
     let activeChat = "general";
-
+    // Avatares por defecto
     const avatars = {
         general: "https://cdn-icons-png.flaticon.com/512/1946/1946429.png"
     };
 
 
-    /*Esta funcion es la encargada de mostrar los mensajes en el chat activo*/
-    //ChatID es el ID del chat que se quiere mostrar, ya que cada chat tiene un ID único
+    //Funcion para renderizar mensajes
+    // Esta función recibe el ID del chat y renderiza los mensajes correspondientes
     function renderMessages(chatId) {
         chatMessages.innerHTML = "";
         if (!chats[chatId]) chats[chatId] = [];
         chats[chatId].forEach(({ from, text, isOwn, special }) => {
             const msgDiv = document.createElement("div");
 
-            //Muestra un mensaje "especial", cuando alguien esta escribiendo, o cuando alguien se une o sale del chat
+            //Si es un mensaje especial, como un aviso de que alguien se unió o salió, lo estilizamos diferente
             if (special) {
                 msgDiv.textContent = text;
                 msgDiv.style.fontStyle = "italic";
@@ -60,38 +53,35 @@ document.addEventListener("DOMContentLoaded", () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-
-    //Función para establecer el chat activo
+    // Esta función establece el chat activo y actualiza el título y avatar del encabezado
+    // También resalta el chat activo en la lista de chats
     function setActiveChat(chatId, displayName) {
         activeChat = chatId;
 
         chatTitle.textContent = displayName;
         chatHeaderAvatar.src = avatars[chatId] || "https://cdn-icons-png.flaticon.com/512/1946/1946429.png";
         chatHeaderAvatar.alt = displayName;
-        // Se convierte a un array los elementos hijos de 'chatList' para poder iterar sobre ellos.
+
         [...chatList.children].forEach(li => {
-            // Se verifica si el valor del atributo 'data-chat' de cada 'li' es igual al 'chatId' actual.
-            // Si es igual, se agrega la clase 'active', si no, se elimina.
             li.classList.toggle("active", li.dataset.chat === chatId);
         });
-
 
         renderMessages(chatId);
     }
 
-
-    //Función para añadir un chat privado al sidebar, es decir, cuando alguien se une al chat te muestra un chat privado con esa persona
+    // Esta función agrega un chat privado a la lista de chats
     function addPrivateChat(userObj) {
+        //QuerySelector busca un elemento con el atributo data-chat que coincida con el nombre del usuario
         if (document.querySelector(`[data-chat="${userObj.name}"]`)) return;
-
+        //Crea un nuevo elemento li para el chat privado
         const li = document.createElement("li");
         li.dataset.chat = userObj.name;
         li.style.cursor = "pointer";
 
         li.innerHTML = `
-      <img src="${userObj.avatar}" alt="${userObj.name}" width="30" height="30" style="border-radius:50%; margin-right:8px;">
-      <span>${userObj.name}</span>
-    `;
+            <img src="${userObj.avatar}" alt="${userObj.name}" width="30" height="30" style="border-radius:50%; margin-right:8px;">
+            <span>${userObj.name}</span>
+        `;
 
         avatars[userObj.name] = userObj.avatar;
 
@@ -103,15 +93,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!chats[userObj.name]) chats[userObj.name] = [];
     }
-
+    // Agregar el chat general a la lista de chats
     const generalChatLi = document.querySelector('li[data-chat="general"]');
     generalChatLi.addEventListener("click", () => {
         setActiveChat("general", "Chat General");
     });
-
+    //Aviso de que se ha unido al chat general
     socket.emit("join", user);
 
+    //Recibir la lista de usuarios conectados
     socket.on("user-list", users => {
+        //Eliminar los chats que ya no están conectados
         [...chatList.children].forEach(li => {
             if (li.dataset.chat !== "general") li.remove();
         });
@@ -121,11 +113,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+
+    //Recibir mensajes del chat general 
     socket.on("message", ({ user: fromUser, text }) => {
         chats.general.push({ from: fromUser.name, text, isOwn: fromUser.name === user.name });
         if (activeChat === "general") renderMessages("general");
     });
-
+    //Recibir mensajes privados
+    // Esta función recibe mensajes privados y los agrega al chat correspondiente
     socket.on("private-message", ({ from, text }) => {
         if (!chats[from]) chats[from] = [];
         chats[from].push({ from, text, isOwn: false });
@@ -137,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+
+    //Recibir avisos de que un usuario se ha unido o salió
     socket.on("user-joined", (msg) => {
         chats.general.push({ from: "Sistema", text: msg, isOwn: false, special: true });
         if (activeChat === "general") renderMessages("general");
@@ -146,8 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
         chats.general.push({ from: "Sistema", text: msg, isOwn: false, special: true });
         if (activeChat === "general") renderMessages("general");
     });
-
-    socket.on("typing", ({ user: userName, typing }) => {
+    //Recibir notificaciones de que un usuario está escribiendo
+    // Esta función muestra un mensaje de "está escribiendo..." cuando un usuario escribe en el chat
+    //Se mostrara encima del input de escritura
+    socket.on("typing", ({ user: userName, typing, chatId }) => {
         const typingDivId = "typingStatus";
         let typingDiv = document.getElementById(typingDivId);
 
@@ -155,17 +154,24 @@ document.addEventListener("DOMContentLoaded", () => {
             typingDiv = document.createElement("div");
             typingDiv.id = typingDivId;
             typingDiv.style.fontStyle = "italic";
-            typingDiv.style.marginTop = "5px";
-            chatMessages.parentNode.appendChild(typingDiv);
+            typingDiv.style.marginBottom = "5px";
+            typingDiv.style.textAlign = "left";
+
+            // Insertar justo antes del formulario (input de escritura)
+            chatForm.parentNode.insertBefore(typingDiv, chatForm);
         }
 
-        if (typing && userName !== user.name) {
+
+        if (typing && userName !== user.name && chatId === activeChat) {
             typingDiv.textContent = `${userName} está escribiendo...`;
         } else {
             typingDiv.textContent = "";
         }
     });
 
+
+    //Envia los mensajes del formulario
+    // Esta función envía el mensaje escrito en el input al servidor
     chatForm.addEventListener("submit", e => {
         e.preventDefault();
         const text = messageInput.value.trim();
@@ -183,5 +189,25 @@ document.addEventListener("DOMContentLoaded", () => {
         messageInput.value = "";
     });
 
+    //  Emitir typing para cualquier chat
+    let typingTimeout;
+    messageInput.addEventListener("input", () => {
+        socket.emit("typing", {
+            user: user.name,
+            typing: true,
+            chatId: activeChat
+        });
+        // Limpiar el timeout anterior para evitar múltiples emisiones
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            socket.emit("typing", {
+                user: user.name,
+                typing: false,
+                chatId: activeChat
+            });
+        }, 1000);
+    });
+
+    // Establecer el chat general como activo al cargar la página
     setActiveChat("general", "Chat General");
 });

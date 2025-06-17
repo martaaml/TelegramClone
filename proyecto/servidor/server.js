@@ -84,13 +84,23 @@ io.on('connection', (socket) => {
     io.to(toSocketId).emit('private-message', { from: fromUser.name, text });
   });
 
-  socket.on('typing', (isTyping) => {
-    const user = users.get(socket.id);
-    if (!user) return;
+  socket.on('typing', ({ user, typing, chatId }) => {
+    const fromUser = users.get(socket.id);
+    if (!fromUser) return;
 
-    // Avisar a todos menos a quien está escribiendo
-    socket.broadcast.emit('typing', { user: user.name, typing: isTyping });
+    if (chatId === "general") {
+      // Notificar a todos menos al que escribe
+      socket.broadcast.emit("typing", { user, typing, chatId });
+    } else {
+      // Es un mensaje privado, buscar al destinatario
+      const toSocketId = Array.from(users.entries()).find(([id, u]) => u.name === chatId)?.[0];
+
+      if (toSocketId) {
+        io.to(toSocketId).emit("typing", { user, typing, chatId });
+      }
+    }
   });
+
 
   socket.on('disconnect', () => {
     const user = users.get(socket.id);

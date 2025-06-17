@@ -96,3 +96,106 @@ body {
 #privateChatMessages {
   flex-grow: 1;
 }
+
+
+/* styles.css */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e5e5e5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+form#loginForm {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+h2 {
+    text-align: center;
+    color: #0088cc;
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    transition: border 0.3s ease;
+}
+
+input[type="text"]:focus {
+    border-color: #0088cc;
+    outline: none;
+}
+
+.avatar-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.avatar-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.avatar-option:hover {
+    transform: scale(1.05);
+    border-color: #0088cc;
+}
+
+.avatar-option.selected {
+    border-color: #0088cc;
+    box-shadow: 0 0 0 3px #b3e5ff;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 0.7rem;
+    background-color: #0088cc;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #007ab8;
+}
+
+#avatarPreview {
+    display: block;
+    margin: 1rem auto;
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    object-fit: cover;
+}
